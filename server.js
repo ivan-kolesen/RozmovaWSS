@@ -10,12 +10,24 @@ const server = app.listen(port, function(){
 });
 
 const wss = new WebSocket.Server({ server });
+let messageId = 1;
 
 wss.on('connection', ws => {
   console.log("connected");
 
   ws.on('message', message => {
-    console.log(message);
-    ws.send(message);
+    const recievedMessage = JSON.parse(message);
+    const sendingMessage = {
+      ...recievedMessage,
+      id: messageId++
+    };
+
+    wss.clients.forEach( client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(sendingMessage));
+      }
+    });
+
+    //ws.send(JSON.stringify(sendingMessage));
   })
 });
