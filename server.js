@@ -2,8 +2,11 @@ const express = require('express');
 const WebSocket = require('ws');
 
 const app = express();
-const server = app.listen(4000, function(){
-  console.log('listening for requests on port 4000,');
+
+const port = process.env.port || 8080;
+
+const server = app.listen(port, function(){
+  console.log('listening for requests');
 });
 
 const wss = new WebSocket.Server({ server });
