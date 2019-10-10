@@ -10,16 +10,29 @@ const server = app.listen(port, function(){
 });
 
 const wss = new WebSocket.Server({ server });
+
+let userId = 1;
 let messageId = 1;
 
 wss.on('connection', ws => {
   console.log("connected");
 
+  ws.send(JSON.stringify({
+    type: "auth",
+    value: {
+      id: userId++
+    }
+  }));
+
   ws.on('message', message => {
     const recievedMessage = JSON.parse(message);
+    console.log(recievedMessage)
     const sendingMessage = {
-      ...recievedMessage,
-      id: messageId++
+      type: "message",
+      value: {
+        ...recievedMessage,
+        id: messageId++
+      }
     };
 
     wss.clients.forEach( client => {
